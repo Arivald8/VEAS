@@ -25,6 +25,7 @@ Date: 25th Oct 2023
 
 from datetime import datetime
 from typing import Any
+import re
 
 
 class User:
@@ -46,6 +47,33 @@ class User:
 
     def __str__(self) -> str:
         return f"Username: {self.username} \nAdmin: {self.is_admin} \nCreated: {self.created}"
+
+
+    def validate_username(username) -> None:
+        if len(username) > 50:
+            raise ValueError(
+                "Username must be no more than 50 characters.")
+
+        if not re.match("^[a-zA-Z0-9_-]*$", username):
+            raise ValueError(
+                "Username can only contain alphanumeric characters, underscores, and hyphens.")
+    
+
+    def validate_password(password) -> None:
+        if len(password) < 8:
+            raise ValueError(
+                "Password must be at least 8 characters.")
+
+        if not re.match(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).*$", password):
+            raise ValueError(
+                "Password must contain at least one uppercase, one lowercase, one number, and one symbol.")
+
+
+    def validate_email(email):
+        if not re.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+            raise ValueError(
+                "Email address is not valid.")
 
     
     def __setattr__(self, __name: str, __value: Any) -> None:
