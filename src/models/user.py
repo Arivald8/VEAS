@@ -44,8 +44,7 @@ import re
 class User:
     def _validate_username(username) -> None:
         if len(username) > 50:
-            raise ValueError(
-                "Username must be no more than 50 characters.")
+            raise ValueError("Username must be no more than 50 characters.")
 
         if not re.match("^[a-zA-Z0-9_-]*$", username):
             raise ValueError(
@@ -54,8 +53,7 @@ class User:
 
     def _validate_password(password) -> None:
         if len(password) < 8:
-            raise ValueError(
-                "Password must be at least 8 characters.")
+            raise ValueError("Password must be at least 8 characters.")
 
         if not re.match(
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).*$", password):
@@ -65,8 +63,7 @@ class User:
 
     def _validate_email(email):
         if not re.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
-            raise ValueError(
-                "Email address is not valid.")
+            raise ValueError("Email address is not valid.")
 
     def __init__(
         self, 
@@ -102,7 +99,20 @@ class User:
                 f"""
                 Incorrect instance type {type(__value)} provided to attribute {__name}.
                 Attribute {__name} should be of type {attr_types[__name]}
-                """
-            )
+                """)
         else:
             super().__setattr__(__name, __value)
+
+
+
+    def __getattribute__(self, __name: str) -> Any:
+        """
+        This method is called unconditionally when an attribute is accessed
+        on an object. It takes the name of the attribute as an argument and
+        returns the value of the attribute. 
+    
+        This will be used to implement custom attribute access behavior, but
+        more specifically it will implement attribute access logging. Each
+        attribute access will be logged to an external file for monitoring. 
+        """
+        return super().__getattribute__(__name)
