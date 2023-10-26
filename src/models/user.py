@@ -86,14 +86,12 @@ class User:
         }
 
         if not isinstance(__value, attr_types[__name]):
-            print(f"__value {__value} and attr {__name}")
             raise ValueError(
                 f"""
                 Incorrect instance type {type(__value)} provided to attribute {__name}.
                 Attribute {__name} should be of type {attr_types[__name]}
                 """
             )
-            
         else:
             super().__setattr__(__name, __value)
 

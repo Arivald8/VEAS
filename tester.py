@@ -56,4 +56,8 @@ class TestUserModel(unittest.TestCase):
             self.user.__setattr__("email", 0)
             self.user.__setattr__("is_admin", 0)
             self.user.__setattr__("created", 0)
-        
+
+
+    def test_user_object_attribute_validators(self):
+        with self.assertRaises(ValueError):
+            pass
