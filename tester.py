@@ -20,7 +20,6 @@ class TestUserModel(unittest.TestCase):
         self.user.password = "tester"
         self.user.email = "tester"
         self.user.is_admin = False
-
         return super().setUp()
 
     
@@ -59,5 +58,13 @@ class TestUserModel(unittest.TestCase):
 
 
     def test_user_object_attribute_validators(self):
+        # Unique constraint validation to be added with DB integration
         with self.assertRaises(ValueError):
-            pass
+            User._validate_username("x"*51)             # Length validation
+            User._validate_username(" ")                # Valid character validation
+            User._validate_password("1")                # Length validation
+            User._validate_password("abcdefghijk123!")  # No uppercase
+            User._validate_password("ABCDEFGHIJK123!")  # No lowercase
+            User._validate_password("Abcdefghijk!")     # No number
+            User._validate_password("Abcdefghijk123")   # No symbol
+            User._validate_email("inc@orr@ect@address")
