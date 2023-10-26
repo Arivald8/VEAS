@@ -37,14 +37,14 @@ class TestUserModel(unittest.TestCase):
 
 
     def test_user_object_attributes_setter(self):
-        self.user.__setattr__("username", "tester")
-        self.user.__setattr__("password", "tester")
-        self.user.__setattr__("email", "tester")
+        self.user.__setattr__("username", "tester2")
+        self.user.__setattr__("password", "tester2")
+        self.user.__setattr__("email", "tester2")
         self.user.__setattr__("is_admin", True)
 
-        self.assertEqual(self.user.username, "tester")
-        self.assertEqual(self.user.password, "tester")
-        self.assertEqual(self.user.email, "tester")
+        self.assertEqual(self.user.username, "tester2")
+        self.assertEqual(self.user.password, "tester2")
+        self.assertEqual(self.user.email, "tester2")
         self.assertEqual(self.user.is_admin, True)
 
     
