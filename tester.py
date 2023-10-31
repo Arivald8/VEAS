@@ -37,10 +37,10 @@ class TestUserModel(unittest.TestCase):
 
 
     def test_user_object_attributes_setter(self):
-        self.user.__setattr__("username", "tester2")
-        self.user.__setattr__("password", "tester2")
-        self.user.__setattr__("email", "tester2")
-        self.user.__setattr__("is_admin", True)
+        self.user.username = "tester2"
+        self.user.password = "tester2"
+        self.user.email = "tester2"
+        self.user.is_admin = True
 
         self.assertEqual(self.user.username, "tester2")
         self.assertEqual(self.user.password, "tester2")
@@ -49,12 +49,12 @@ class TestUserModel(unittest.TestCase):
 
     
     def test_user_object_setter_raise_value_errors(self):
-        with self.assertRaises(ValueError):
-            self.user.__setattr__("username", 0)
-            self.user.__setattr__("password", 0)
-            self.user.__setattr__("email", 0)
-            self.user.__setattr__("is_admin", 0)
-            self.user.__setattr__("created", 0)
+        with self.assertRaises(TypeError):
+            self.user.username = 0
+            self.user.password = 0
+            self.user.email = 0
+            self.user.is_admin = 0
+            self.user.created = 0
 
 
     def test_user_object_attribute_validators(self):

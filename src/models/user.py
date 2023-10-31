@@ -35,7 +35,8 @@ Created: 25th Oct 2023
 Edited: 26th Oct 2023
 """
 
-
+from src.strings import errors as error
+from src.strings import re_patterns as match
 from datetime import datetime
 from typing import Any
 import re
@@ -44,26 +45,23 @@ import re
 class User:
     def _validate_username(username) -> None:
         if len(username) > 50:
-            raise ValueError("Username must be no more than 50 characters.")
-
-        if not re.match("^[a-zA-Z0-9_-]*$", username):
-            raise ValueError(
-                "Username can only contain alphanumeric characters, underscores, and hyphens.")
+            raise ValueError(error.username_length)
+        if not re.match(match.username_chars, username):
+            raise ValueError(error.invalid_username)
     
 
     def _validate_password(password) -> None:
         if len(password) < 8:
-            raise ValueError("Password must be at least 8 characters.")
-
+            raise ValueError(error.password_length)
         if not re.match(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+=-]).*$", password):
-            raise ValueError(
-                "Password must contain at least one uppercase, one lowercase, one number, and one symbol.")
+            match.password_chars, password):
+            raise ValueError(error.invalid_password)
 
 
     def _validate_email(email):
-        if not re.match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
-            raise ValueError("Email address is not valid.")
+        if not re.match(match.email_chars, email):
+            raise ValueError(error.invalid_email)
+
 
     def __init__(
         self, 
@@ -85,7 +83,7 @@ class User:
         return f"Username: {self.username} \nAdmin: {self.is_admin} \nCreated: {self.created}"
 
     
-    def __setattr__(self, __name: str, __value: Any) -> None:
+    def __setattr__(self, name: str, value: Any) -> None:
         attr_types = {
             "username": str,
             "password": str,
@@ -93,18 +91,14 @@ class User:
             "is_admin": bool,
             "created": datetime}
 
-        if not isinstance(__value, attr_types[__name]):
-            raise ValueError(
-                f"""
-                Incorrect instance type {type(__value)} provided to attribute {__name}.
-                Attribute {__name} should be of type {attr_types[__name]}
-                """)
+        if not isinstance(value, attr_types[name]):
+            error.compose("TypeError", error.incorrect_type(attr_types, value, name))
         else:
-            super().__setattr__(__name, __value)
+            super().__setattr__(name, value)
 
 
 
-    def __getattribute__(self, __name: str) -> Any:
+    def __getattribute__(self, name: str) -> Any:
         """
         This method is called unconditionally when an attribute is accessed
         on an object. It takes the name of the attribute as an argument and
@@ -114,4 +108,4 @@ class User:
         more specifically it will implement attribute access logging. Each
         attribute access will be logged to an external file for monitoring. 
         """
-        return super().__getattribute__(__name)
+        return super().__getattribute__(name)
