@@ -103,7 +103,7 @@ class User:
         in ATTR_TYPES.
         """
         if not isinstance(value, self.ATTR_TYPES[name]):
-            error.compose("TypeError", error.incorrect_type(self.ATTR_TYPES, value, name))
+            raise TypeError(error.incorrect_type(self.ATTR_TYPES, value, name))
         else:
             super().__setattr__(name, value)
 
