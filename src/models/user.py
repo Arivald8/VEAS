@@ -43,6 +43,14 @@ import re
 
 
 class User:
+    ATTR_TYPES = {
+            "username": str,
+            "password": str,
+            "email": str,
+            "is_admin": bool,
+            "created": datetime
+        }
+
     def _validate_username(username) -> None:
         if len(username) > 50:
             raise ValueError(error.username_length)
@@ -84,18 +92,20 @@ class User:
 
     
     def __setattr__(self, name: str, value: Any) -> None:
-        attr_types = {
-            "username": str,
-            "password": str,
-            "email": str,
-            "is_admin": bool,
-            "created": datetime}
+        """
+        This method is called unconditionally when an attribute is set
+        on an object of the User class.
 
-        if not isinstance(value, attr_types[name]):
-            error.compose("TypeError", error.incorrect_type(attr_types, value, name))
+        name: type str: Name of the attribute to set the value for.
+        value: multiple types: Value to be set for the named attribute.
+
+        Checks if value has the valid type to be assigned. Types are mapped
+        in ATTR_TYPES.
+        """
+        if not isinstance(value, self.ATTR_TYPES[name]):
+            error.compose("TypeError", error.incorrect_type(self.ATTR_TYPES, value, name))
         else:
             super().__setattr__(name, value)
-
 
 
     def __getattribute__(self, name: str) -> Any:
