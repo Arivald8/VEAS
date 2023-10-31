@@ -91,8 +91,7 @@ class User:
             "password": str,
             "email": str,
             "is_admin": bool,
-            "created": datetime
-        }
+            "created": datetime}
 
         if not isinstance(__value, attr_types[__name]):
             raise ValueError(
