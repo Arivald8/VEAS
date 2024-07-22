@@ -5,7 +5,7 @@ import strings.queries as query
 import strings.errors as error
 
 class DB:
-    def __init__(self, db_type, db_name="database.db"):
+    def __init__(self, db_type="sqlite", db_name="database.db"):
         self.db_type = db_type
         self.db_name = db_name
         self.connection = None
@@ -33,7 +33,7 @@ class DB:
 
 
     def table_exists(self, name=None) -> bool:
-        self.cursor.execute(query.table_exists, name)
+        self.cursor.execute(query.table_exists, (name, ))
         return self.cursor.fetchone() is not None
 
 
@@ -45,12 +45,13 @@ class DB:
     def create_user(self, username, password, email, is_admin, created):
         self.cursor.execute(
             query.create_user, 
-            username,
+            (username,
             password, 
             email, 
             is_admin,
-            created 
+            created) 
         )
+        self.connection.commit()
 
 
     def read_user(self, user_id=None, username=None):

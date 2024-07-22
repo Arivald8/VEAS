@@ -35,9 +35,12 @@ Created: 25th Oct 2023
 Edited: 26th Oct 2023
 """
 
+from managers.db import DB
+
 from strings import errors as error
 from strings import re_patterns as match
 
+from sqlite3 import Error as sql_error
 from datetime import datetime
 from typing import Any
 import re
@@ -124,3 +127,18 @@ class User:
         attribute access will be logged to an external file for monitoring. 
         """
         return super().__getattribute__(name)
+    
+
+    def create(self, db: DB) -> bool:
+        try:
+            db.create_user(
+                self.username,
+                self.password,
+                self.email,
+                self.is_admin,
+                self.created
+            )
+            return True
+        except sql_error as e:
+            print(f"An error occured: {e}")
+            return False
