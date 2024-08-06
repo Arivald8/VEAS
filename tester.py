@@ -227,7 +227,6 @@ class TestDB(unittest.TestCase):
         )
         expiration_time = datetime.now() + timedelta(minutes=30)
         string_time = str(expiration_time)
-        split_time = string_time.split('.')
 
         self.db.create_session(session_id, username, expiration_time)
         
