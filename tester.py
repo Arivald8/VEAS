@@ -17,14 +17,10 @@ from src.managers.db import DB
 from src.managers.auth import Auth
 
 
-class TestSrcVersion(unittest.TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
-
-    
+class TestSrcVersion(unittest.TestCase):    
     def test_version(self):
         """
-        Test the project version (__version__) against an expected value.
+        Test the project version (__version__) against an expected ver.
         """
         self.assertEqual(__version__, "0.1")
 
