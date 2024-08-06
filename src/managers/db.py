@@ -73,7 +73,7 @@ class DB:
 
 
     def update_user(self, user_id=None, username=None, password=None, email=None, is_admin=None):
-        query_str = ""
+        query_str = query.update_user
         params = []
 
         if username:
@@ -96,8 +96,7 @@ class DB:
         query_str += query.where_id
         params.append(user_id)
 
-        print(tuple(params))
-        # self.cursor.execute(query_str, tuple(params))
-        # self.connection.commit()
+        self.cursor.execute(query_str, tuple(params))
+        self.connection.commit()
 
     

@@ -19,7 +19,7 @@ read_user_where_username = "SELECT * FROM User WHERE username = ?"
 read_user_where_id = "SELECT * FROM User WHERE id = ?"
 
 update_user = "UPDATE User SET "
-username = "name = ?, "
+username = "username = ?, "
 password = "password = ?, "
 email = "email = ?, "
 is_admin = "is_admin = ?, "
