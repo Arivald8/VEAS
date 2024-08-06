@@ -44,3 +44,6 @@ password_length = "Password must be at least 8 characters."
 invalid_username =  "Username can only contain alphanumeric characters, underscores, and hyphens."
 invalid_password = "Password must contain at least one uppercase, one lowercase, one number, and one symbol."
 invalid_email = "Email address is not valid."
+
+invalid_read_user_args = "You can provide either user id, or username, but not both."
+no_read_user_args = "You must provide a username, or user id."

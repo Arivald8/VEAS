@@ -35,8 +35,12 @@ Created: 25th Oct 2023
 Edited: 26th Oct 2023
 """
 
-from src.strings import errors as error
-from src.strings import re_patterns as match
+from ..managers.db import DB
+
+from ..strings import errors as error
+from ..strings import re_patterns as match
+
+from sqlite3 import Error as sql_error
 from datetime import datetime
 from typing import Any
 import re
@@ -50,6 +54,7 @@ class User:
             "is_admin": bool,
             "created": datetime
         }
+    
 
     def _validate_username(username) -> None:
         if len(username) > 50:
@@ -79,7 +84,6 @@ class User:
         is_admin: bool = False,
         created: datetime = datetime.now()
     ):
-        self.created = created
         self.username = username
         self.password = password
         self.email = email
@@ -89,6 +93,10 @@ class User:
 
     def __str__(self) -> str:
         return f"Username: {self.username} \nAdmin: {self.is_admin} \nCreated: {self.created}"
+    
+
+    def __repr__(self):
+        return f"User(username={self.username!r}, is_admin={self.is_admin!r}, created={self.created!r})"
 
     
     def __setattr__(self, name: str, value: Any) -> None:
@@ -119,3 +127,18 @@ class User:
         attribute access will be logged to an external file for monitoring. 
         """
         return super().__getattribute__(name)
+    
+
+    def create(self, db: DB) -> bool:
+        try:
+            db.create_user(
+                self.username,
+                self.password,
+                self.email,
+                self.is_admin,
+                self.created
+            )
+            return True
+        except sql_error as e:
+            print(f"An error occured: {e}")
+            return False

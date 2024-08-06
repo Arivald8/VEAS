@@ -118,3 +118,5 @@ class TestUserModel(unittest.TestCase):
         with self.assertRaises(ValueError):
             User._validate_email("inc@orr@ect@address") # Email Regex match
 
+
+
