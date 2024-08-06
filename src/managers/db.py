@@ -1,8 +1,12 @@
 import sqlite3
-from pathlib import Path
 
-import src.strings.queries as query
-import src.strings.errors as error
+try:
+    import src.strings.queries as query
+    import src.strings.errors as error
+
+except ModuleNotFoundError:
+    import strings.queries as query
+    import strings.errors as error
 
 
 class DB:
@@ -56,26 +60,15 @@ class DB:
 
 
     def read_user(self, user_id=None, username=None):
-        def wrong_args():
+        if user_id:
+            self.cursor.execute(query.read_user_where_id, (user_id,))
+
+        elif username:
+            self.cursor.execute(query.read_user_where_username, (username,))
+        
+        else:
             raise ValueError(error.invalid_read_user_args)
-        
-        def no_args():
-            raise ValueError(error.no_read_user_args)
-        
-        def id_provided():
-            self.cursor.execute(query.read_user_where_id)
 
-        def username_provided():
-            self.cursor.execute(query.read_user_where_username)
-
-        conditions = {
-            (user_id is not None, username is not None): lambda: wrong_args,
-            (user_id is not None, username is None): lambda: id_provided,
-            (user_id is None, username is not None): lambda: username_provided,
-            (user_id is None, username is None): no_args
-        }
-
-        conditions[(user_id is not None, username is not None)]()
         return self.cursor.fetchone()
 
 
