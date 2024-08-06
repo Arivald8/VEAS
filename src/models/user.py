@@ -35,10 +35,10 @@ Created: 25th Oct 2023
 Edited: 26th Oct 2023
 """
 
-from managers.db import DB
+from ..managers.db import DB
 
-from strings import errors as error
-from strings import re_patterns as match
+from ..strings import errors as error
+from ..strings import re_patterns as match
 
 from sqlite3 import Error as sql_error
 from datetime import datetime

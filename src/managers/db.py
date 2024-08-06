@@ -1,8 +1,9 @@
 import sqlite3
 from pathlib import Path
 
-import strings.queries as query
-import strings.errors as error
+import src.strings.queries as query
+import src.strings.errors as error
+
 
 class DB:
     def __init__(self, db_type="sqlite", db_name="database.db"):
