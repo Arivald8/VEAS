@@ -12,6 +12,7 @@ from datetime import datetime
 from src import __version__
 from src.models.user import User
 from src.managers.db import DB
+from src.managers.auth import Auth
 
 
 class TestSrcVersion(unittest.TestCase):
@@ -153,7 +154,6 @@ class TestDB(unittest.TestCase):
         
         self.assertIsNotNone(user)
         self.assertEqual(user[1], 'testuser')
-        self.assertEqual(user[2], 'password123')
         self.assertEqual(user[3], 'test@example.com')
         self.assertFalse(user[4])
         self.assertEqual(user[5], '2024-01-01')
@@ -193,6 +193,30 @@ class TestDB(unittest.TestCase):
         self.assertEqual(updated_user[2], 'newpass')
         self.assertEqual(updated_user[3], 'newemail@example.com')
         self.assertTrue(updated_user[4])
+
+
+class TestAuth(unittest.TestCase):
+    def test_hash_password(self):
+        auth = Auth(password="Password123")
+        password_hash = auth.password_hash
+        self.assertTrue(password_hash)
+        self.assertEqual(len(password_hash.split(':')), 2)
+    
+    def test_check_password_correct(self):
+        password = "Password123"
+        auth = Auth(password=password)
+        self.assertTrue(auth.check_password(password))
+    
+    def test_check_password_incorrect(self):
+        password = "Password123"
+        auth = Auth(password=password)
+        self.assertFalse(auth.check_password("WrongPassword"))
+    
+    def test_hash_password_uniqueness(self):
+        password = "Password123"
+        auth1 = Auth(password=password)
+        auth2 = Auth(password=password)
+        self.assertNotEqual(auth1.password_hash, auth2.password_hash)
 
 
 

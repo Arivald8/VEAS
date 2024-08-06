@@ -3,16 +3,19 @@ import sqlite3
 try:
     import src.strings.queries as query
     import src.strings.errors as error
+    from src.managers.auth import Auth
 
 except ModuleNotFoundError:
     import strings.queries as query
     import strings.errors as error
+    from managers.auth import Auth
 
 
 class DB:
     def __init__(self, db_type="sqlite", db_name="database.db"):
         self.db_type = db_type
         self.db_name = db_name
+        self.auth = Auth()
         self.connection = None
         self.cursor = None
         self.connect()
@@ -48,10 +51,12 @@ class DB:
 
     
     def create_user(self, username, password, email, is_admin, created):
+        pass_hash = self.auth.hash_password(password)
+        
         self.cursor.execute(
             query.create_user, 
             (username,
-            password, 
+            pass_hash, 
             email, 
             is_admin,
             created) 
