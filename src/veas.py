@@ -18,6 +18,8 @@ class VEAS:
         self.db.initialize_database()
         if not self.db.table_exists("User"):
             self.db.create_user_table()
+        if not self.db.table_exists("session"):
+            self.db.create_session_table()
 
 
     def new_user(self, username, password, email, is_admin):
@@ -46,11 +48,24 @@ class VEAS:
         -> str: uuid
         """
         if self.authenticate(username, password):
-            return self.session.create_session(username)
+            session_id = self.session.create_session(username)
+            expiration_time = self.session.sessions[session_id]['expiration_time']
+
+            try:
+                self.db.create_session(session_id, username, expiration_time)
+                return session_id
+            
+            except ValueError as e:
+                print(e)
+                existing_session_id = self.db.get_session_by_username(username)
+                self.db.update_session_expiration(existing_session_id, expiration_time)
+                return existing_session_id
         
     
     def logout(self, session_id) -> None:
         self.session.delete_session(session_id)
+        self.db.delete_session(session_id)
+        print("Logged out successfully")
         
 
     def get_username_from_session(self, session_id) -> str:

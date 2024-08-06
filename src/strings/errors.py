@@ -49,3 +49,7 @@ invalid_read_user_args = "You can provide either user id, or username, but not b
 no_read_user_args = "You must provide a username, or user id."
 
 email_already_exists = "This email already exists. You must provide a unique email address."
+
+session_exists_for_user = "Session already exists for this user"
+
+username_taken = "This username is already taken."
