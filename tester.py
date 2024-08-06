@@ -226,7 +226,6 @@ class TestDB(unittest.TestCase):
             '2024-01-01'
         )
         expiration_time = datetime.now() + timedelta(minutes=30)
-        string_time = str(expiration_time)
 
         self.db.create_session(session_id, username, expiration_time)
         
