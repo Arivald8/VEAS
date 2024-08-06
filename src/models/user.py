@@ -35,12 +35,18 @@ Created: 25th Oct 2023
 Edited: 26th Oct 2023
 """
 
-from ..managers.db import DB
+try:
+    from ..managers.db import DB
 
-from ..strings import errors as error
-from ..strings import re_patterns as match
+    from ..strings import errors as error
+    from ..strings import re_patterns as match
+    
+except ImportError:
+    from managers.db import DB
+    from strings import errors as error
+    from strings import re_patterns as match
 
-from sqlite3 import Error as sql_error
+from sqlite3 import Error, IntegrityError
 from datetime import datetime
 from typing import Any
 import re
@@ -139,6 +145,11 @@ class User:
                 self.created
             )
             return True
-        except sql_error as e:
+        
+        except IntegrityError as e:
+            print(error.email_already_exists)
+            return False
+        
+        except Error as e:
             print(f"An error occured: {e}")
             return False

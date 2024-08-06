@@ -47,3 +47,5 @@ invalid_email = "Email address is not valid."
 
 invalid_read_user_args = "You can provide either user id, or username, but not both."
 no_read_user_args = "You must provide a username, or user id."
+
+email_already_exists = "This email already exists. You must provide a unique email address."

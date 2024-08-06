@@ -6,10 +6,13 @@ Tested:
 - 'src.models.user.User': Unit tests for the 'User' model class.
 """
 
+import os
 import unittest
 from datetime import datetime
 from src import __version__
 from src.models.user import User
+from src.managers.db import DB
+from src.managers.auth import Auth
 
 
 class TestSrcVersion(unittest.TestCase):
@@ -117,6 +120,103 @@ class TestUserModel(unittest.TestCase):
             User._validate_password("Abcdefghijk123")   # No symbol
         with self.assertRaises(ValueError):
             User._validate_email("inc@orr@ect@address") # Email Regex match
+
+
+class TestDB(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.test_db_name = "test_database.db"
+        cls.db = DB(db_name=cls.test_db_name)
+        cls.db.create_user_table()
+        
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.db.close()
+        if os.path.exists(cls.test_db_name):
+            os.remove(cls.test_db_name)
+
+    
+    def test_create_user_table(self):
+        self.assertTrue(self.db.table_exists('User'))
+
+    
+    def test_create_user(self):
+        self.db.create_user(
+            "testuser",
+            "password123",
+            "test@example.com",
+            False,
+            '2024-01-01'
+        )
+
+        user = self.db.read_user(username="testuser")
+        
+        self.assertIsNotNone(user)
+        self.assertEqual(user[1], 'testuser')
+        self.assertEqual(user[3], 'test@example.com')
+        self.assertFalse(user[4])
+        self.assertEqual(user[5], '2024-01-01')
+
+
+    def test_read_user(self):
+        self.db.create_user(
+            "readtest",
+            "pass",
+            "readtest@example.com",
+            False,
+            "2023-01-01"
+        )
+
+        user = self.db.read_user(username="readtest")
+
+        self.assertIsNotNone(user)
+        self.assertEqual(user[1], "readtest")
+
+
+    def test_update_user(self):
+        self.db.create_user(
+            'updatetest',
+            'oldpass',
+            'update@example.com',
+            False, 
+            '2023-01-01'
+        )
+
+        user = self.db.read_user(username='updatetest')
+        user_id = user[0]
+
+        self.db.update_user(user_id=user_id, username='newusername', password='newpass', email='newemail@example.com', is_admin=True)
+        updated_user = self.db.read_user(username='newusername')
+        
+        self.assertEqual(updated_user[1], 'newusername')
+        self.assertEqual(updated_user[2], 'newpass')
+        self.assertEqual(updated_user[3], 'newemail@example.com')
+        self.assertTrue(updated_user[4])
+
+
+class TestAuth(unittest.TestCase):
+    def test_hash_password(self):
+        auth = Auth(password="Password123")
+        password_hash = auth.password_hash
+        self.assertTrue(password_hash)
+        self.assertEqual(len(password_hash.split(':')), 2)
+    
+    def test_check_password_correct(self):
+        password = "Password123"
+        auth = Auth(password=password)
+        self.assertTrue(auth.check_password(password))
+    
+    def test_check_password_incorrect(self):
+        password = "Password123"
+        auth = Auth(password=password)
+        self.assertFalse(auth.check_password("WrongPassword"))
+    
+    def test_hash_password_uniqueness(self):
+        password = "Password123"
+        auth1 = Auth(password=password)
+        auth2 = Auth(password=password)
+        self.assertNotEqual(auth1.password_hash, auth2.password_hash)
 
 
 
