@@ -10,11 +10,13 @@ Tested:
 
 import os
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from src import __version__
 from src.models.user import User
 from src.managers.db import DB
 from src.managers.auth import Auth
+
+import src.strings.errors as error
 
 
 class TestSrcVersion(unittest.TestCase):    
@@ -126,6 +128,7 @@ class TestDB(unittest.TestCase):
         cls.test_db_name = "test_database.db"
         cls.db = DB(db_name=cls.test_db_name)
         cls.db.create_user_table()
+        cls.db.create_session_table()
         
     
     @classmethod
@@ -137,6 +140,10 @@ class TestDB(unittest.TestCase):
     
     def test_create_user_table(self):
         self.assertTrue(self.db.table_exists('User'))
+
+
+    def test_create_session_table(self):
+        self.assertTrue(self.db.table_exists('session'))
 
     
     def test_create_user(self):
@@ -156,6 +163,83 @@ class TestDB(unittest.TestCase):
         self.assertFalse(user[4])
         self.assertEqual(user[5], '2024-01-01')
 
+    
+    def test_create_session(self):
+        username = "testuser"
+        expiration_time = datetime.now() + timedelta(minutes=30)
+        string_time = str(expiration_time)
+        split_time = string_time.split('.')
+
+        self.db.create_session('session_id', username, expiration_time)
+
+        session = self.db.get_session('session_id')
+
+        session_split_time = session[1].split('.')
+
+        self.assertIsNotNone(session)
+        self.assertEqual(session[0], username)
+        self.assertEqual(session_split_time[0], split_time[0])
+
+
+    def test_create_session_unique_constraint(self):
+        username = "testuser2"
+        self.db.create_user(
+            username,
+            "password123",
+            "test2@example.com",
+            False,
+            '2024-01-01'
+        )
+        expiration_time = datetime.now() + timedelta(minutes=30)
+        self.db.create_session('session_id_1', username, expiration_time)
+        
+        with self.assertRaises(ValueError) as context:
+            self.db.create_session('session_id_2', username, expiration_time)
+
+
+    def test_delete_session(self):
+        session_id = 'session_id_4'
+        username = "testuser4"
+        self.db.create_user(
+            username,
+            "password123",
+            "test4@example.com",
+            False,
+            '2024-01-01'
+        )
+        expiration_time = datetime.now() + timedelta(minutes=30)
+        self.db.create_session(session_id, username, expiration_time)
+        
+        self.db.delete_session(session_id)
+        session = self.db.get_session(session_id)
+        self.assertIsNone(session)
+
+
+    def test_update_session_expiration(self):
+        session_id = 'session_id_5'
+        username = "testuser5"
+        self.db.create_user(
+            username,
+            "password123",
+            "test5@example.com",
+            False,
+            '2024-01-01'
+        )
+        expiration_time = datetime.now() + timedelta(minutes=30)
+        string_time = str(expiration_time)
+        split_time = string_time.split('.')
+
+        self.db.create_session(session_id, username, expiration_time)
+        
+        new_expiration_time = datetime.now() + timedelta(minutes=60)
+        self.db.update_session_expiration(session_id, new_expiration_time)
+        
+        session = self.db.get_session(session_id)
+        session_split_time = session[1].split('.')
+        
+        self.assertIsNotNone(session)
+        self.assertEqual(session_split_time[0], new_expiration_time.strftime('%Y-%m-%d %H:%M:%S'))
+        
 
     def test_read_user(self):
         self.db.create_user(
