@@ -2,8 +2,10 @@
 Testing Framework: Unittest
 
 Tested:
-- '__version__': Unit tests for the project's version.
-- 'src.models.user.User': Unit tests for the 'User' model class.
+- '__version__'
+- 'src.models.user.User'
+- 'src.managers.db.DB'
+- 'src.managers.auth.Auth'
 """
 
 import os
@@ -202,16 +204,19 @@ class TestAuth(unittest.TestCase):
         self.assertTrue(password_hash)
         self.assertEqual(len(password_hash.split(':')), 2)
     
+
     def test_check_password_correct(self):
         password = "Password123"
         auth = Auth(password=password)
         self.assertTrue(auth.check_password(password))
     
+
     def test_check_password_incorrect(self):
         password = "Password123"
         auth = Auth(password=password)
         self.assertFalse(auth.check_password("WrongPassword"))
     
+
     def test_hash_password_uniqueness(self):
         password = "Password123"
         auth1 = Auth(password=password)
