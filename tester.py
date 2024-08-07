@@ -286,13 +286,15 @@ class TestAuth(unittest.TestCase):
     def test_check_password_correct(self):
         password = "Password123"
         auth = Auth(password=password)
-        self.assertTrue(auth.check_password(password))
+        password_hash = auth.password_hash
+        self.assertTrue(auth.check_password(password_hash, password))
     
 
     def test_check_password_incorrect(self):
         password = "Password123"
         auth = Auth(password=password)
-        self.assertFalse(auth.check_password("WrongPassword"))
+        password_hash = auth.password_hash
+        self.assertFalse(auth.check_password(password_hash, "WrongPassword"))
     
 
     def test_hash_password_uniqueness(self):

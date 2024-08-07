@@ -17,6 +17,10 @@ valid_session = auth.validate_session(session_id)
 
 print(f"SESSION VALID? {valid_session}")
 
+user_data = auth.get_user("Arivald")
+
+print(f"USER DATA = {user_data}")
+
 
 
 

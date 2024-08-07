@@ -28,19 +28,30 @@ class VEAS:
 
 
     def get_user(self, username=None) -> tuple:
+        """
+        ->
+            pk
+            username
+            pass_hash
+            email,
+            is_admin,
+            date created
+        """
         return self.db.read_user(username=username)
 
 
     def authenticate(self, username, password) -> bool:
-        auth = Auth(password=password)
         user_record = self.get_user(username=username)
         
-        if user_record and auth.check_password(password=password):
-            print("User authenticated successfully.")
-            return True
-        else:
-            print("Wrong username or password.")
-            return False
+        if user_record:
+            auth = Auth(password_hash=user_record[2])
+            
+            if auth.check_password(user_record[2], password):
+                print("User authenticated successfully.")
+                return True
+
+        print("Wrong username or password.")
+        return False
         
 
     def login(self, username, password) -> str:
