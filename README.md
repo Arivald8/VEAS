@@ -6,7 +6,7 @@ VEAS is a straightforward authentication system designed for user authentication
 ## Features
 * User creation and management
 * Password hashing and validation
-* Session creation, validation and manageent
+* Session creation, validation and management
 * Integration with SQLite for persistent storage
 
 ## Usage
